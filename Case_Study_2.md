@@ -1,0 +1,73 @@
+---
+title: "Case Study 2: Wealth and Life Expectancy (Gapminder)"
+author: "Tanner Fackrell"
+date: "January 17, 2020"
+output:
+  html_document: 
+    code_folding: hide
+    fig_align: center
+    fig_height: 6
+    fig_width: 12
+    keep_md: yes
+    toc: yes
+    toc_float: yes
+---
+
+
+
+
+
+
+```r
+# Use this R-Chunk to import all your datasets!
+```
+
+## Background
+
+During this Case study I learned a lot about how ggplot works.I learned to use functions that I had never used before. I also learned a lot about how I can find answers to questions I have about using R. It helped me to think of different ways that data can be visualized and why it is done in that way. Finally, I believe that it was helpful because I have a better idea of other possible ways to visualize data.
+
+
+
+## Data Visualization
+
+
+```r
+# Plot 1
+ggplot(data = filter(gapminder, country != "Kuwait"),
+       mapping = aes(x=lifeExp, y=gdpPercap, 
+      color = continent, size = pop / 100000)) + 
+  geom_point() +
+  facet_wrap(~year, nrow = 1) + 
+theme_bw() + labs(x = "Life Expectancy", y = "GDP per capita") + 
+labs(size = "Population (100k)") +
+  scale_y_continuous(trans = "sqrt")
+```
+
+![](Case_Study_2_files/figure-html/plot_data-1.png)<!-- -->
+
+```r
+ggsave("Case Study2.png", width = 15, units = "in")
+```
+
+
+
+```r
+#Plot 2
+gapminder2 <- gapminder %>% group_by(continent, year) %>% mutate(avegdp = weighted.mean(gdpPercap, pop), total_pop= sum(pop)/100000)
+
+ggplot(data = filter(gapminder2, country != "Kuwait"),
+       mapping = aes(x=year, y= gdpPercap, color = continent)) +
+  geom_line(aes(group = country)) +
+  geom_point() +
+  facet_wrap(~continent, nrow = 1) +
+  theme_bw() + labs(x = "Year", y = "GDP per Capita") + labs(size = "Population (100k)") +
+  geom_line(data = gapminder2, mapping = aes(x = year, y = avegdp), color = "black") +
+  geom_point(data = gapminder2, mapping = aes(x = year, y = avegdp, size = total_pop), color = "black")
+```
+
+![](Case_Study_2_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
+ggsave("Case Studytwo.png", width = 15, units = "in")
+```
+
